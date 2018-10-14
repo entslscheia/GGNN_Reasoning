@@ -4,7 +4,11 @@ This is a Pytorch implementantion of [Gated Graph Neural Network](https://arxiv.
 
 Though our scenario is using GGNN to approximate the ABox consistency checking problem in *OWL2 EL*, where each ABox sample can be deemed as a small directed graph and thus the consistency checking can be modeled as a graph-level binary classification problem, the implementation is quite generic.
 
-Usage:
+## Requirements:
+Python 3.6 <br>
+PyTorch >=0.4 <br>
+
+## Usage:
 - For the input json data format:<br>
 each sample has the format as follows,<br>
 **{'target': label of sample, <br>
