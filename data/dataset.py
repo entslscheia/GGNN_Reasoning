@@ -8,11 +8,6 @@ class Test:
         self.content = content
 
 class ABoxDataset():
-    """
-    Load bAbI tasks for GGNN
-    """
-
-    # only task 4 has more than one task_id, all other tasks only have id 0
     def __init__(self, fileName, is_train):
         self.all_data = self.load_graphs_from_file(fileName)
         self.num_of_data = self.all_data[0].shape[0]
