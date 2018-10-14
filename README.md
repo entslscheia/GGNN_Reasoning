@@ -2,7 +2,7 @@
 This is a Pytorch implementantion of [Gated Graph Neural Network](https://arxiv.org/pdf/1511.05493.pdf) (Li, Yujia, et al. "Gated graph sequence neural networks." arXiv preprint arXiv:1511.05493 (2015).). This implementation follows the framework of
 [JamesChuanggg/ggnn.pytorch](https://github.com/JamesChuanggg/ggnn.pytorch). The main difference is that my implemantation are more suitable for graph datasets with tremendous edge types such as Knowledge Graphs as it's more memory-efficient.
 
-Though our scenario is using GGNN to approximate the ABox consistency checking problem in OWL EL, where each ABox can be sample can be deemed as a small directed graph, the implementation is quite generic.
+Though our scenario is using GGNN to approximate the ABox consistency checking problem in OWL EL, where each ABox sample can be deemed as a small directed graph, the implementation is quite generic.
 
 Usage:
 - For the input json data format:<br>
