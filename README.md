@@ -17,3 +17,4 @@ each sample has the format as follows,<br>
 }**<br>
 (All ids start from 1)
 - To run the code, please use command **`python main.py`**.
+- To run it on GPU, please use command **`python main.py --cuda`**.
