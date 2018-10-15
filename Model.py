@@ -78,6 +78,9 @@ class GGNN(nn.Module):
                 # A[i]: List(List((edge_type, neighbour)))
                 a_in_i = [torch.zeros(self.state_dim).double() for k in range(self.n_node)]
                 a_out_i = [torch.zeros(self.state_dim).double() for k in range(self.n_node)]
+                if self.use_cuda:
+                    a_in_i = a_in_i.cuda()
+                    a_out_i = a_out_i.cuda()
                 for j in range(len(A[i])):  # len(A[i]) should be n_node
                     # print(i, ': ', len(A[i][j]))
                     if len(A[i][j]) > 0:
