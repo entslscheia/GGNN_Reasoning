@@ -4,7 +4,10 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
     # set the training mode, since some behaviors for the model can be different during training and evaluaton
     # e.g., when the model contains dropout and batch_normalization
     net.train()
+    loss_sum = 0
+    sample_count = 0
     for i, (annotation, A_dummy, target, data_idx) in enumerate(dataloader, 0):
+        sample_count += len(A_dummy)
         # each item is a batch of data, the default batch_size is 10 here
         # annotation: [batch_size, n_node, annotation_dim]
         # A: len(A) = batch_size, len(A[i]) = n_node
@@ -27,9 +30,13 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
 
         loss = criterion(output, target)
 
+        loss_sum += loss*len(A_dummy)
+
         # optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
         if i % int(len(dataloader) / 10 + 1) == 0 and opt.verbal:
             print('[%d/%d][%d/%d] Loss: %.4f' % (epoch, opt.niter, i, len(dataloader), loss.data[0]))
+
+    print('Average loss for epoch: %.4f' % (loss_sum / sample_count))
