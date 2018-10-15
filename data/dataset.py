@@ -12,7 +12,7 @@ class ABoxDataset():
         self.all_data = self.load_graphs_from_file(fileName)
         self.num_of_data = self.all_data[0].shape[0]
         print("number of samples: ", self.num_of_data)
-        all_task_train_data, all_task_val_data = self.split_set(self.all_data, 0.8)
+        all_task_train_data, all_task_val_data = self.split_set(self.all_data, 0.9)
 
         if is_train:
             self.data = all_task_train_data
