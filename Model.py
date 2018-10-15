@@ -117,7 +117,8 @@ class GGNN(nn.Module):
                             product0 = product0.view(self.state_dim)
                             if self.use_bias:
                                 edge_idx0 = torch.LongTensor([edge_type + self.num_edge_types // 2 - 1])
-                                edge_idx0 = edge_idx0.cuda()
+                                if self.cuda:
+                                    edge_idx0 = edge_idx0.cuda()
                                 product0 += self.edgeBias(edge_idx0)\
                                                                                     .view(self.state_dim)
                             a_in_i[neighbour_id] += product0
