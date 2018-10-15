@@ -19,7 +19,7 @@ parser.add_argument('--state_dim', type=int, default=160, help='GGNN hidden stat
 parser.add_argument('--n_steps', type=int, default=5, help='propogation steps number of GGNN')
 parser.add_argument('--niter', type=int, default=100, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
-parser.add_argument('--cuda', action='store_true', help='enables cuda', default=True)
+parser.add_argument('--cuda', action='store_true', help='enables cuda')
 parser.add_argument('--use_bias', action='store_true', help='enables bias for edges', default=True)
 parser.add_argument('--verbal', action='store_true', help='print training info or not', default=True)
 parser.add_argument('--manualSeed', type=int, help='manual seed')
