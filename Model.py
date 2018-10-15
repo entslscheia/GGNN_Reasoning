@@ -45,7 +45,7 @@ class GGNN(nn.Module):
         self.time_steps = opt.n_steps
         self.use_bias = opt.use_bias
         self.annotation_dim = opt.annotation_dim
-        self.cuda = opt.cuda
+        self.use_cuda = opt.cuda
 
         # embedding for different type of edges. To use it as matrix, view each vector as [state_dim, state_dim]
         self.edgeEmbed = nn.Embedding(num_edge_types, opt.state_dim * opt.state_dim, sparse=False)
@@ -86,7 +86,7 @@ class GGNN(nn.Module):
                         vector_j = vector_j.view(self.state_dim, 1)
                         for edge_type, neighbour_id in A[i][j]:  # A[i][j]: (edge_type(out), neighbour)
                             edge_idx = torch.LongTensor([edge_type - 1])
-                            if self.cuda:
+                            if self.use_cuda:
                                 edge_idx = edge_idx.cuda()
                             # [state_dim*state_dim]
                             edge_embed = self.edgeEmbed(edge_idx)
@@ -102,14 +102,14 @@ class GGNN(nn.Module):
                             product = product.view(self.state_dim)
                             if self.use_bias:
                                 edge_idx = torch.LongTensor([edge_type - 1])
-                                if self.cuda:
+                                if self.use_cuda:
                                     edge_idx = edge_idx.cuda()
                                 product += self.edgeBias(edge_idx).view(self.state_dim)
                             a_out_i[j] += product
 
                             # compute incoming information for neighbour_id
                             edge_idx0 = torch.LongTensor([edge_type + self.num_edge_types // 2 - 1])
-                            if self.cuda:
+                            if self.use_cuda:
                                 edge_idx0 = edge_idx0.cuda()
                             edge_embed0 = self.edgeEmbed(edge_idx0)
                             edge_embed0 = edge_embed0.view(self.state_dim, self.state_dim)
@@ -117,7 +117,7 @@ class GGNN(nn.Module):
                             product0 = product0.view(self.state_dim)
                             if self.use_bias:
                                 edge_idx0 = torch.LongTensor([edge_type + self.num_edge_types // 2 - 1])
-                                if self.cuda:
+                                if self.use_cuda:
                                     edge_idx0 = edge_idx0.cuda()
                                 product0 += self.edgeBias(edge_idx0)\
                                                                                     .view(self.state_dim)
