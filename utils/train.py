@@ -8,10 +8,9 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
     correct = 0
     sample_count = 0
     for i, (annotation, A_dummy, target, data_idx) in enumerate(dataloader, 0):
-        sample_count += len(A_dummy)
         # each item is a batch of data, the default batch_size is 10 here
         # annotation: [batch_size, n_node, annotation_dim]
-        # A: len(A) = batch_size, len(A[i]) = n_node
+        # A: len(A) = batch_size, len(A[i]) = n_node. A is generated later, and don't use A_dummy!!
         # target: [batch_size]
         annotation_dim = annotation.shape[2]
         net.zero_grad()
@@ -25,6 +24,7 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
 
         A = [dataset.all_data[1][j] for j in data_idx]  # right way to get A from dataloader and dataset
         # print("AAAAAAAAAA: ", A)
+        sample_count += len(A)
         init_input = init_input.double()
         annotation = annotation.double()
         target = target.double()
@@ -43,7 +43,7 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
 
         loss = criterion(output, target)
 
-        loss_sum += loss*len(A_dummy)
+        loss_sum += loss*len(A)
 
         # optimizer.zero_grad()
         loss.backward()
