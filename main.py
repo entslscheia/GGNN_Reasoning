@@ -73,9 +73,21 @@ def main(opt):
 
     optimizer = optim.Adam(net.parameters(), lr=opt.lr)
 
+    best_acc = 0.0     # best accuracy has been achieved
+    num_of_dec = 0     # number of epochs have a decline of accuracy, used for early stop
+    acc_last_iter = 0.0  # accuracy of the last iteration
     for epoch in range(0, opt.niter):
+        if num_of_dec >= 5:
+            print("Early stop! The accuracy has been dropped for 5 iterations!")
+            break
         train(epoch, train_dataloader, train_dataset, net, criterion, optimizer, opt)
-        test(test_dataloader, test_dataset,net, criterion, opt)
+        acc = test(test_dataloader, test_dataset, net, criterion, opt)
+        if acc > best_acc:
+            best_acc = acc
+        if acc >= acc_last_iter:
+            num_of_dec = 0
+        else:
+            num_of_dec += 1
 
 
 if __name__ == "__main__":

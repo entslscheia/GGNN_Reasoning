@@ -37,6 +37,9 @@ def test(dataloader, dataset, net, criterion, opt):
         correct += pred.eq(target.data).cpu().sum()
 
     test_loss /= sample_count
+    accuracy = 100. * correct / len(dataloader.dataset)
     print('Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)'.format(
         test_loss, correct, len(dataloader.dataset),
-        100. * correct / len(dataloader.dataset)))
+        accuracy))
+
+    return accuracy
