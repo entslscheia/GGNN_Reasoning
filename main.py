@@ -79,11 +79,13 @@ def main(opt):
     for epoch in range(0, opt.niter):
         if num_of_dec >= 5:
             print("Early stop! The accuracy has been dropped for 5 iterations!")
+            print("The best accuracy achieved is: ", best_acc)
             break
         train(epoch, train_dataloader, train_dataset, net, criterion, optimizer, opt)
         acc = test(test_dataloader, test_dataset, net, criterion, opt)
         if acc > best_acc:
             best_acc = acc
+            print("Best accuracy by far: ", best_acc)
         if acc >= acc_last_iter:
             num_of_dec = 0
         else:
