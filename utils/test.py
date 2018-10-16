@@ -30,9 +30,8 @@ def test(dataloader, dataset, net, criterion, opt):
             else:
                 labels.append(0)
         pred = torch.DoubleTensor(labels)
-        # print('pred: ', pred)
-        # print('target: ', target)
-        # correct += pred.eq(target.data.view_as(pred)).cpu().sum()
+        if opt.cuda:
+            pred = pred.cuda()
         correct += pred.eq(target.data).cpu().sum()
 
     test_loss /= len(dataloader.dataset)
