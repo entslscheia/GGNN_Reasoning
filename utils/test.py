@@ -7,7 +7,6 @@ def test(dataloader, dataset, net, criterion, opt):
     correct = 0
     net.eval()  # set the evaluation mode. It's necessary when using something like dropout
     for i, (annotation, A_dummy, target, data_idx) in enumerate(dataloader, 0):
-        sample_count += len(A_dummy)
         annotation_dim = annotation.shape[2]
         padding = torch.zeros(len(annotation), opt.n_node, opt.state_dim - annotation_dim).double()
         init_input = torch.cat((annotation.double(), padding), 2)   # [batch_size, self.n_node, state_dim]
@@ -17,13 +16,14 @@ def test(dataloader, dataset, net, criterion, opt):
             target = target.cuda()
 
         A = [dataset.all_data[1][j] for j in data_idx]  # right way to get A from dataloader and dataset
+        sample_count += len(A)
         # print("AAAAAAAAAA: ", A)
         init_input = init_input.double()
         annotation = annotation.double()
         target = target.double()
         output = net(init_input, annotation, A)
         # print(criterion(output, target).data)
-        test_loss += criterion(output, target).data.item()*len(A_dummy)
+        test_loss += criterion(output, target).data.item()*len(A)
         # print('output: ', output)
         labels = []
         for j in range(output.shape[0]):
