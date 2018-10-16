@@ -22,7 +22,7 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
             annotation = annotation.cuda()
             target = target.cuda()
 
-        A = [dataset.all_data[1][i] for i in data_idx]  # right way to get A from dataloader and dataset
+        A = [dataset.all_data[1][j] for j in data_idx]  # right way to get A from dataloader and dataset
         # print("AAAAAAAAAA: ", A)
         init_input = init_input.double()
         annotation = annotation.double()
