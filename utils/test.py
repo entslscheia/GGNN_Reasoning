@@ -42,4 +42,4 @@ def test(dataloader, dataset, net, criterion, opt):
         test_loss, correct, len(dataloader.dataset),
         accuracy))
 
-    return accuracy
+    return accuracy.item()
