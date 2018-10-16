@@ -30,8 +30,8 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
         output = net(init_input, annotation, A)
         
         labels = []
-        for i in range(output.shape[0]):
-            if output[i] >= 0.5:
+        for j in range(output.shape[0]):
+            if output[j] >= 0.5:
                 labels.append(1)
             else:
                 labels.append(0)
@@ -51,5 +51,5 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
         if i % int(len(dataloader) / 10 + 1) == 0 and opt.verbal:
             print('[%d/%d][%d/%d] Loss: %.4f' % (epoch, opt.niter, i, len(dataloader), loss.data[0]))
 
-    print('Average loss for epoch: %.4f' % (loss_sum / sample_count), ', accuracy: %.4f' % (correct / sample_count), \
+    print('Average loss for epoch: %.4f' % (loss_sum / sample_count), ', accuracy: %.4f' % (float(correct) / float(sample_count)), \
          ' [%d/%d]' % (correct, sample_count))
