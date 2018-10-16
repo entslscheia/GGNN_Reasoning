@@ -16,7 +16,7 @@ def test(dataloader, dataset, net, criterion, opt):
             annotation = annotation.cuda()
             target = target.cuda()
 
-        A = [dataset.all_data[1][i] for i in data_idx]  # right way to get A from dataloader and dataset
+        A = [dataset.all_data[1][j] for j in data_idx]  # right way to get A from dataloader and dataset
         # print("AAAAAAAAAA: ", A)
         init_input = init_input.double()
         annotation = annotation.double()
@@ -26,8 +26,8 @@ def test(dataloader, dataset, net, criterion, opt):
         test_loss += criterion(output, target).data.item()*len(A_dummy)
         # print('output: ', output)
         labels = []
-        for i in range(output.shape[0]):
-            if output[i] >= 0.5:
+        for j in range(output.shape[0]):
+            if output[j] >= 0.5:
                 labels.append(1)
             else:
                 labels.append(0)
