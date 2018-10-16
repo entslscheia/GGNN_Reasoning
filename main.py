@@ -86,6 +86,7 @@ def main(opt):
         if acc > best_acc:
             best_acc = acc
             print("Best accuracy by far: ", best_acc)
+            torch.save(net, './model.pth')
         if acc >= acc_last_iter:
             num_of_dec = 0
         else:
