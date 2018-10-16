@@ -15,6 +15,7 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
         # target: [batch_size]
         annotation_dim = annotation.shape[2]
         net.zero_grad()
+        assert opt.state_dim >= annotation_dim
         padding = torch.zeros(len(annotation), opt.n_node, opt.state_dim - annotation_dim).double()
         init_input = torch.cat((annotation.double(), padding), 2)  # [batch_size, self.n_node, state_dim]
         if opt.cuda:
