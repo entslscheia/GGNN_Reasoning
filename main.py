@@ -37,6 +37,7 @@ if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 
 opt.dataroot = 'data/train.db2.json'
+fileName = opt.dataroot[5:]
 
 def main(opt):
     train_dataset = ABoxDataset(opt.dataroot, True)
@@ -85,7 +86,7 @@ def main(opt):
         if acc > best_acc:
             best_acc = acc
             print("Best accuracy by far: ", best_acc)
-            torch.save(net, './model.pth')
+            torch.save(net, './' + fileName + str(opt.n_steps) + '_model.pth')
         if acc >= acc_last_iter:
             num_of_dec = 0
         else:
