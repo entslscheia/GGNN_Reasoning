@@ -4,16 +4,18 @@ import torch.nn as nn
 
 
 class Propagator(nn.Module):
-    def __init__(self, state_dim):
+    def __init__(self, state_dim, dropout_rate):
         super(Propagator, self).__init__()
 
         self.reset_gate = nn.Sequential(
             nn.Linear(state_dim*3, state_dim),
-            nn.Sigmoid()
+            nn.Sigmoid(),
+            nn.Dropout(dropout_rate)
         )
         self.update_gate = nn.Sequential(
             nn.Linear(state_dim*3, state_dim),
-            nn.Sigmoid()
+            nn.Sigmoid(),
+            nn.Dropout(dropout_rate)
         )
         self.tansform = nn.Sequential(
             nn.Linear(state_dim*3, state_dim),
@@ -46,12 +48,13 @@ class GGNN(nn.Module):
         self.use_bias = opt.use_bias
         self.annotation_dim = opt.annotation_dim
         self.use_cuda = opt.cuda
+        self.dropout_rate = opt.dropout
 
         # embedding for different type of edges. To use it as matrix, view each vector as [state_dim, state_dim]
         self.edgeEmbed = nn.Embedding(num_edge_types, opt.state_dim * opt.state_dim, sparse=False)
         if self.use_bias:
             self.edgeBias = nn.Embedding(num_edge_types, opt.state_dim, sparse=False)
-        self.propagator = Propagator(self.state_dim)
+        self.propagator = Propagator(self.state_dim, self.dropout_rate)
 
         # output
         self.attention = nn.Sequential(
