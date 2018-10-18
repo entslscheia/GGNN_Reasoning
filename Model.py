@@ -48,7 +48,7 @@ class GGNN(nn.Module):
         self.use_bias = opt.use_bias
         self.annotation_dim = opt.annotation_dim
         self.use_cuda = opt.cuda
-        self.dropout_rate = opt.dropout
+        self.dropout_rate = opt.dropout_rate
 
         # embedding for different type of edges. To use it as matrix, view each vector as [state_dim, state_dim]
         self.edgeEmbed = nn.Embedding(num_edge_types, opt.state_dim * opt.state_dim, sparse=False)
