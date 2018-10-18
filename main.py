@@ -86,13 +86,13 @@ def main(opt):
         acc = test(test_dataloader, test_dataset, net, criterion, opt)
         if acc > best_acc:
             best_acc = acc
-            print("Best accuracy by far: ", best_acc)
+            print("Best accuracy by far: ", best_acc, '%')
             torch.save(net, './' + fileName + str(opt.n_steps) + '_model.pth')
         if acc >= acc_last_iter:
             num_of_dec = 0
         else:
             num_of_dec += 1
-    print("The best accuracy achieved is: ", best_acc, '%')
+        print("The best accuracy achieved by far: ", best_acc, '%')
 
 
 if __name__ == "__main__":
