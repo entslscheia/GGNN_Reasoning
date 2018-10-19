@@ -18,3 +18,5 @@ each sample has the format as follows,<br>
 (All ids start from 1)
 - To run the code, please use command **`python main.py`**.
 - To run it on GPU, please use command **`python main.py --cuda`**.
+<br>
+(For general use, you should only care about files without a suffix 'plus', those files are for specific use of ABox reasoning model.)
