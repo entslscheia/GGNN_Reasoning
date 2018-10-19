@@ -14,18 +14,12 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
         # A: len(A) = batch_size, len(A[i]) = n_node. A is generated later, and don't use A_dummy!!
         # target: [batch_size]
         net.zero_grad()
-        # padding = torch.zeros(len(annotation), opt.n_node, opt.state_dim - opt.annotation_dim).double()
-        # init_input = torch.cat((annotation.double(), padding), 2)  # [batch_size, self.n_node, state_dim]
         if opt.cuda:
-            # init_input = init_input.cuda()
-            # annotation = annotation.cuda()
             target = target.cuda()
 
         A = [dataset.all_data[1][j] for j in data_idx]  # right way to get A from dataloader and dataset
         # print("AAAAAAAAAA: ", A)
         sample_count += len(A)
-        # init_input = init_input.double()
-        # annotation = annotation.double()
         target = target.double()
         output = net(annotation_id, A)
         # output = net(init_input, annotation, A)

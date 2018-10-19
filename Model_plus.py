@@ -37,12 +37,13 @@ class Propagator(nn.Module):
         return output
 
 
-class GGNN(nn.Module):
-    def __init__(self, n_node, num_edge_types, opt):
-        super(GGNN, self).__init__()
+class GGNN_plus(nn.Module):
+    def __init__(self, n_node, num_edge_types, n_types, opt):
+        super(GGNN_plus, self).__init__()
 
         self.n_node = n_node
         self.num_edge_types = num_edge_types
+        self.n_types = n_types
         self.state_dim = opt.state_dim
         self.time_steps = opt.n_steps
         self.use_bias = opt.use_bias
@@ -51,10 +52,12 @@ class GGNN(nn.Module):
         self.dropout_rate = opt.dropout_rate
 
         # embedding for different type of edges. To use it as matrix, view each vector as [state_dim, state_dim]
-        self.edgeEmbed = nn.Embedding(num_edge_types, opt.state_dim * opt.state_dim, sparse=False)
+        self.edgeEmbed = nn.Embedding(self.num_edge_types, opt.state_dim * opt.state_dim, sparse=False)
         if self.use_bias:
-            self.edgeBias = nn.Embedding(num_edge_types, opt.state_dim, sparse=False)
+            self.edgeBias = nn.Embedding(self.num_edge_types, opt.state_dim, sparse=False)
         self.propagator = Propagator(self.state_dim, self.dropout_rate)
+        # embedding for different types (classes)
+        self.typeEmbed = nn.Embedding(self.n_types, self.annotation_dim, sparse=False)
 
         # output
         self.attention = nn.Sequential(
@@ -68,7 +71,34 @@ class GGNN(nn.Module):
         self.result = nn.Sigmoid()
 
 
-    def forward(self, prop_state, annotation, A):
+    def forward(self, annotation_id, A):
+        # annotation_id: [batch_size, n_node]
+        # need to based on annotation_id to generate init prop_state and annotation
+        annotation = []
+        for i in range(annotation_id.shape[0]):
+            annotation_i = []
+            for id in annotation_id[i]:
+                if id.long() != 0:
+                    type_idx = (id.long().item() - 1)
+                    type_idx = torch.LongTensor([type_idx])
+                    annotation_i.append(self.typeEmbed(type_idx).view(self.annotation_dim).double())
+                else:
+                    annotation_i.append(torch.zeros(self.annotation_dim).double())
+            annotation_i = torch.stack(annotation_i)       # [n_node, annotation_dim]
+            annotation.append(annotation_i)
+        annotation = torch.stack(annotation)    # [batch_size, n_node, annotation_dim]
+
+        assert self.state_dim >= self.annotation_dim
+        if self.state_dim > self.annotation_dim:
+            padding = torch.zeros(len(annotation), self.n_node, self.state_dim - self.annotation_dim).double()
+            prop_state = torch.cat((annotation.double(), padding), 2)  # [batch_size, self.n_node, state_dim]
+        else:
+            prop_state = annotation.clone()
+
+        if self.use_cuda:
+            annotation = annotation.cuda()
+            prop_state = prop_state.cuda()
+
         # prop_state: [batch_size, n_node, state_dim]
         # annotation: [batch_size, n_node, annotation_dim]
         # A: [[[(edge_type, node_id)]]]

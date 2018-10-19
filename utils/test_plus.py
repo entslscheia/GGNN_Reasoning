@@ -6,22 +6,15 @@ def test(dataloader, dataset, net, criterion, opt):
     sample_count = 0
     correct = 0
     net.eval()  # set the evaluation mode. It's necessary when using something like dropout
-    for i, (annotation, A_dummy, target, data_idx) in enumerate(dataloader, 0):
-        annotation_dim = annotation.shape[2]
-        padding = torch.zeros(len(annotation), opt.n_node, opt.state_dim - annotation_dim).double()
-        init_input = torch.cat((annotation.double(), padding), 2)   # [batch_size, self.n_node, state_dim]
+    for i, (annotation_id, A_dummy, target, data_idx) in enumerate(dataloader, 0):
         if opt.cuda:
-            init_input = init_input.cuda()
-            annotation = annotation.cuda()
             target = target.cuda()
 
         A = [dataset.all_data[1][j] for j in data_idx]  # right way to get A from dataloader and dataset
         sample_count += len(A)
         # print("AAAAAAAAAA: ", A)
-        init_input = init_input.double()
-        annotation = annotation.double()
         target = target.double()
-        output = net(init_input, annotation, A)
+        output = net(annotation_id, A)
         # print(criterion(output, target).data)
         test_loss += criterion(output, target).data.item()*len(A)
         # print('output: ', output)
