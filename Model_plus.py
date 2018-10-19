@@ -81,7 +81,10 @@ class GGNN_plus(nn.Module):
                 if id.long() != 0:
                     type_idx = (id.long().item() - 1)
                     type_idx = torch.LongTensor([type_idx])
-                    annotation_i.append(self.typeEmbed(type_idx).view(self.annotation_dim).double())
+                    if self.use_cuda:
+                        annotation_i.append(self.typeEmbed(type_idx).view(self.annotation_dim).double().cuda())
+                    else:
+                        annotation_i.append(self.typeEmbed(type_idx).view(self.annotation_dim).double())
                 else:
                     if self.use_cuda:
                         annotation_i.append(torch.zeros(self.annotation_dim).double().cuda())
