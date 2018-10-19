@@ -83,7 +83,10 @@ class GGNN_plus(nn.Module):
                     type_idx = torch.LongTensor([type_idx])
                     annotation_i.append(self.typeEmbed(type_idx).view(self.annotation_dim).double())
                 else:
-                    annotation_i.append(torch.zeros(self.annotation_dim).double())
+                    if self.use_cuda:
+                        annotation_i.append(torch.zeros(self.annotation_dim).double().cuda())
+                    else:
+                        annotation_i.append(torch.zeros(self.annotation_dim).double())
             annotation_i = torch.stack(annotation_i)       # [n_node, annotation_dim]
             annotation.append(annotation_i)
         annotation = torch.stack(annotation)    # [batch_size, n_node, annotation_dim]
