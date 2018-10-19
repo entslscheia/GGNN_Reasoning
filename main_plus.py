@@ -6,17 +6,17 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from Model import GGNN
-from utils.train import train
-from utils.test import test
-from data.dataset import ABoxDataset
+from Model_plus import GGNN_plus
+from data.dataset_plus import ABoxDataset_plus
+from utils.train_plus import train
+from utils.test_plus import test
 from data.dataloader import ABoxDataloader
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--workers', type=int, help='number of data loading workers', default=1)
 parser.add_argument('--batchSize', type=int, default=32, help='input batch size')
-# for GGNN_plus, we use the same dimension for hidden state and annotation
-parser.add_argument('--state_dim', type=int, default=185, help='GGNN hidden state size')
+parser.add_argument('--annotation_dim', type=int, default=20, help='annotation dimension for nodes')
+parser.add_argument('--state_dim', type=int, default=20, help='GGNN hidden state size')
 parser.add_argument('--n_steps', type=int, default=5, help='propogation steps number of GGNN')
 parser.add_argument('--niter', type=int, default=100, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.00001, help='learning rate')
@@ -38,31 +38,22 @@ torch.manual_seed(opt.manualSeed)
 if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 
-opt.dataroot = 'data/train.2.json'
+opt.dataroot = 'data/train.test.json'
 fileName = opt.dataroot[5:]
 
 def main(opt):
-    train_dataset = ABoxDataset(opt.dataroot, True)
+    train_dataset = ABoxDataset_plus(opt.dataroot, True)
     train_dataloader = ABoxDataloader(train_dataset, batch_size=opt.batchSize, \
                                       shuffle=True, num_workers=opt.workers)
-    opt.annotation_dim = train_dataset.annotation_dim
-    # An example of accessing A using dataloader and dataset
-    # Very important
-    # for idx, (annotation, A, target, data_idx) in enumerate(train_dataloader):
-    #      print('index', data_idx)
-    #      A = [train_dataset.all_data[1][i] for i in data_idx]
-    #      print(A)
-    #      print(target)
 
-
-    test_dataset = ABoxDataset(opt.dataroot, False)
+    test_dataset = ABoxDataset_plus(opt.dataroot, False)
     test_dataloader = ABoxDataloader(test_dataset, batch_size=opt.batchSize, \
                                      shuffle=False, num_workers=opt.workers)
 
     opt.n_edge_types = train_dataset.n_edge_types
     opt.n_node = train_dataset.n_node
 
-    net = GGNN(train_dataset.n_node, train_dataset.n_edge_types*2, opt)    # times 2 because it's directed
+    net = GGNN_plus(train_dataset.n_node, train_dataset.n_edge_types*2, train_dataset.n_types, opt)    # times 2 because it's directed
     net.double()
     # print(net)
 
