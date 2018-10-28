@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import json
 import random
+from collections import defaultdict
 
 class Test:
     def __init__(self, content):
@@ -35,6 +36,8 @@ class ABoxDataset_plus():
             data = json.load(f)
         random.seed(23)
         random.shuffle(data)
+        self.edge_id_dic = self.get_edge_id_dic(data)
+        self.type_id_dic = self.get_type_id_dic(data)
         self.n_edge_types = self.find_max_edge_id(data)
         self.n_node = self.find_max_node_num(data)
         self.n_types = self.find_max_type_id(data)
@@ -70,6 +73,45 @@ class ABoxDataset_plus():
         all_data.append(target_list)
         all_data.append(data_idx)
         return all_data
+
+    @staticmethod
+    def get_type_frequency(data):
+        freq_dict = defaultdict(int)
+        for i in range(len(data)):
+            for j in data[i]['node_features']:
+                freq_dict[j] += 1
+
+        return (sorted(freq_dict.items(), key=lambda item: item[1]))
+
+    def get_type_id_dic(self, data):
+        type_id_dic = defaultdict(int)
+        freq_dic = self.get_type_frequency(data)
+        i = 1
+        for k, v in freq_dic:
+            if k != 0 and v > 20:
+                type_id_dic[k] = i
+                i += 1
+        return type_id_dic
+
+    @staticmethod
+    def get_edge_frequency(data):
+        freq_dict = defaultdict(int)
+        for i in range(len(data)):
+            for triple in data[i]["graph"]:
+                freq_dict[triple[1]] += 1
+
+        return (sorted(freq_dict.items(), key=lambda item : item[1]))
+
+    def get_edge_id_dic(self, data):
+        edge_id_dic = defaultdict(int)    # default id 0 for unknown, edges with low frequency are also treated as unk
+        freq_dict = self.get_edge_frequency(data)
+        i = 1
+        for k, v in freq_dict:
+            if v > 20:     # the threshold frequency for unk. if set to 0,then it's equivalent to the original version
+                edge_id_dic[k] = i
+                i += 1
+        return edge_id_dic
+
 
     @staticmethod
     def find_max_edge_id(data):

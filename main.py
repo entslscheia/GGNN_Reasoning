@@ -37,7 +37,7 @@ torch.manual_seed(opt.manualSeed)
 if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 
-opt.dataroot = 'data/train.2.json'
+opt.dataroot = 'data/train.db2.json'
 fileName = opt.dataroot[5:]
 
 def main(opt):
@@ -79,8 +79,8 @@ def main(opt):
     num_of_dec = 0     # number of epochs have a decline of accuracy, used for early stop
     acc_last_iter = 0.0  # accuracy of the last iteration
     for epoch in range(0, opt.niter):
-        if num_of_dec >= 5:
-            print("Early stop! The accuracy has been dropped for 5 iterations!")
+        if num_of_dec >= 15:
+            print("Early stop! The accuracy has been dropped for 15 iterations!")
             break
         train(epoch, train_dataloader, train_dataset, net, criterion, optimizer, opt)
         acc = test(test_dataloader, test_dataset, net, criterion, opt)
@@ -88,7 +88,7 @@ def main(opt):
             best_acc = acc
             print("Best accuracy by far: ", best_acc, '%')
             torch.save(net, './' + fileName + str(opt.n_steps) + '_model.pth')
-        if acc >= acc_last_iter:
+        if acc >= best_acc:
             num_of_dec = 0
         else:
             num_of_dec += 1

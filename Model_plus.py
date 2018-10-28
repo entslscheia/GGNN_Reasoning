@@ -38,12 +38,14 @@ class Propagator(nn.Module):
 
 
 class GGNN_plus(nn.Module):
-    def __init__(self, n_node, num_edge_types, n_types, opt):
+    def __init__(self, n_node, edge_id_dic, type_id_dic, opt):
         super(GGNN_plus, self).__init__()
 
         self.n_node = n_node
-        self.num_edge_types = num_edge_types
-        self.n_types = n_types
+        self.num_edge_types = (len(edge_id_dic) + 1) * 2   # + 1 because there's unk, *2 because it's directed
+        print('num of edge embeddings: ', self.num_edge_types)
+        self.n_types = len(type_id_dic) + 1
+        print('num of type embeddings: ', self.n_types)
         self.state_dim = opt.state_dim
         self.time_steps = opt.n_steps
         self.use_bias = opt.use_bias
@@ -71,7 +73,7 @@ class GGNN_plus(nn.Module):
         self.result = nn.Sigmoid()
 
 
-    def forward(self, annotation_id, A):
+    def forward(self, annotation_id, A, edge_id_dic, type_id_dic):
         # annotation_id: [batch_size, n_node]
         # need to based on annotation_id to generate init prop_state and annotation
         annotation = []
@@ -79,8 +81,7 @@ class GGNN_plus(nn.Module):
             annotation_i = []
             for id in annotation_id[i]:
                 if id.long() != 0:
-                    type_idx = (id.long().item() - 1)
-                    type_idx = torch.LongTensor([type_idx])
+                    type_idx = torch.LongTensor([type_id_dic[id]])
                     if self.use_cuda:
                         type_idx = type_idx.cuda()
                     if self.use_cuda:
@@ -129,7 +130,7 @@ class GGNN_plus(nn.Module):
                         vector_j = prop_state[i][j]
                         vector_j = vector_j.view(self.state_dim, 1)
                         for edge_type, neighbour_id in A[i][j]:  # A[i][j]: (edge_type(out), neighbour)
-                            edge_idx = torch.LongTensor([edge_type - 1])
+                            edge_idx = torch.LongTensor([edge_id_dic[edge_type]])
                             if self.use_cuda:
                                 edge_idx = edge_idx.cuda()
                             # [state_dim*state_dim]
@@ -145,14 +146,14 @@ class GGNN_plus(nn.Module):
                             # [state_dim]
                             product = product.view(self.state_dim)
                             if self.use_bias:
-                                edge_idx = torch.LongTensor([edge_type - 1])
+                                edge_idx = torch.LongTensor([edge_id_dic[edge_type]])
                                 if self.use_cuda:
                                     edge_idx = edge_idx.cuda()
                                 product += self.edgeBias(edge_idx).view(self.state_dim)
                             a_out_i[j] += product
 
                             # compute incoming information for neighbour_id
-                            edge_idx0 = torch.LongTensor([edge_type + self.num_edge_types // 2 - 1])
+                            edge_idx0 = torch.LongTensor([edge_id_dic[edge_type] + self.num_edge_types // 2])
                             if self.use_cuda:
                                 edge_idx0 = edge_idx0.cuda()
                             edge_embed0 = self.edgeEmbed(edge_idx0)
@@ -160,7 +161,7 @@ class GGNN_plus(nn.Module):
                             product0 = torch.mm(edge_embed0, vector_j)
                             product0 = product0.view(self.state_dim)
                             if self.use_bias:
-                                edge_idx0 = torch.LongTensor([edge_type + self.num_edge_types // 2 - 1])
+                                edge_idx0 = torch.LongTensor([edge_id_dic[edge_type] + self.num_edge_types // 2])
                                 if self.use_cuda:
                                     edge_idx0 = edge_idx0.cuda()
                                 product0 += self.edgeBias(edge_idx0)\

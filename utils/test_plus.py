@@ -1,7 +1,7 @@
 import torch
 from torch.autograd import Variable
 
-def test(dataloader, dataset, net, criterion, opt):
+def test(dataloader, dataset, net, criterion, edge_id_dic, type_id_dic, opt):
     test_loss = 0
     sample_count = 0
     correct = 0
@@ -14,7 +14,7 @@ def test(dataloader, dataset, net, criterion, opt):
         sample_count += len(A)
         # print("AAAAAAAAAA: ", A)
         target = target.double()
-        output = net(annotation_id, A)
+        output = net(annotation_id, A, edge_id_dic, type_id_dic)
         # print(criterion(output, target).data)
         test_loss += criterion(output, target).data.item()*len(A)
         # print('output: ', output)

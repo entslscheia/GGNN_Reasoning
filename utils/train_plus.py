@@ -1,7 +1,7 @@
 import torch
 
 
-def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
+def train(epoch, dataloader, dataset, net, criterion, optimizer, edge_id_dic, type_id_dic, opt):
     # set the training mode, since some behaviors for the model can be different during training and evaluaton
     # e.g., when the model contains dropout and batch_normalization
     net.train()
@@ -21,7 +21,7 @@ def train(epoch, dataloader, dataset, net, criterion, optimizer, opt):
         # print("AAAAAAAAAA: ", A)
         sample_count += len(A)
         target = target.double()
-        output = net(annotation_id, A)
+        output = net(annotation_id, A, edge_id_dic, type_id_dic)
         # output = net(init_input, annotation, A)
 
         labels = []

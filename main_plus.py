@@ -19,7 +19,7 @@ parser.add_argument('--annotation_dim', type=int, default=20, help='annotation d
 parser.add_argument('--state_dim', type=int, default=20, help='GGNN hidden state size')
 parser.add_argument('--n_steps', type=int, default=5, help='propogation steps number of GGNN')
 parser.add_argument('--niter', type=int, default=100, help='number of epochs to train for')
-parser.add_argument('--lr', type=float, default=0.0003, help='learning rate')
+parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
 parser.add_argument('--dropout_rate', type=float, default=0.0, help='probability of dropout')
 parser.add_argument('--cuda', action='store_true', help='enables cuda')
 parser.add_argument('--use_bias', action='store_true', help='enables bias for edges', default=True)
@@ -39,6 +39,7 @@ if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 
 opt.dataroot = 'data/train.test2.json'
+# opt.dataroot = 'www.train2.json'
 fileName = opt.dataroot[5:]
 
 def main(opt):
@@ -52,8 +53,8 @@ def main(opt):
 
     opt.n_edge_types = train_dataset.n_edge_types
     opt.n_node = train_dataset.n_node
-
-    net = GGNN_plus(train_dataset.n_node, train_dataset.n_edge_types*2, train_dataset.n_types, opt)    # times 2 because it's directed
+    # times 2 because it's directed
+    net = GGNN_plus(train_dataset.n_node, train_dataset.edge_id_dic, train_dataset.type_id_dic, opt)
     net.double()
     # print(net)
 
@@ -71,16 +72,18 @@ def main(opt):
     num_of_dec = 0     # number of epochs have a decline of accuracy, used for early stop
     acc_last_iter = 0.0  # accuracy of the last iteration
     for epoch in range(0, opt.niter):
-        if num_of_dec >= 5:
-            print("Early stop! The accuracy has been dropped for 5 iterations!")
+        if num_of_dec >= 15:
+            print("Early stop! The accuracy has been dropped for 15 iterations!")
             break
-        train(epoch, train_dataloader, train_dataset, net, criterion, optimizer, opt)
-        acc = test(test_dataloader, test_dataset, net, criterion, opt)
+        train(epoch, train_dataloader, train_dataset, net, criterion, optimizer, train_dataset.edge_id_dic, \
+              train_dataset.type_id_dic, opt)
+        acc = test(test_dataloader, test_dataset, net, criterion, train_dataset.edge_id_dic, \
+                   train_dataset.type_id_dic, opt)
         if acc > best_acc:
             best_acc = acc
             print("Best accuracy by far: ", best_acc, '%')
             torch.save(net, './' + fileName + str(opt.n_steps) + '_model.pth')
-        if acc >= acc_last_iter:
+        if acc >= best_acc:
             num_of_dec = 0
         else:
             num_of_dec += 1
