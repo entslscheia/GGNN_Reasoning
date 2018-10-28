@@ -19,4 +19,4 @@ each sample has the format as follows,<br>
 - To run the code, please use command **`python main.py`**.
 - To run it on GPU, please use command **`python main.py --cuda`**.
 <br>
-(For general use, you should only care about files without a suffix 'plus', those files are for specific use of ABox reasoning model. Specifically, for GGNN_plus, you don't have to specify the initial annotations for each node by yourself, the annotation for all nodes are stored in an embedding layer, which is also learnable during the training process. Experiments demonstrate that GGNN_plus outperforms GGNN on ABox Reasoning from both efficiency and effectiveness.)
+(For general use, you should only care about files without a suffix 'plus', as those files are for specific use of ABox reasoning model. Specifically, for GGNN_plus, you don't have to specify the initial annotations for each node by yourself, the annotation for all nodes are stored in an embedding layer, which is also learnable during the training process. Experiments demonstrate that GGNN_plus outperforms GGNN on ABox Reasoning from both efficiency and effectiveness.)
