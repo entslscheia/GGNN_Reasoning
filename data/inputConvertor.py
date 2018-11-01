@@ -78,6 +78,10 @@ class Convertor:
 
         # print(len(self.data))
 
+    def output(self):
+        outputFile(self.data, "www2.json")
+        # outputFile(self.data, "dbpedia.base.json")
+
     # proportion: the proportion of traning data 0-1
     def split(self, proportion):
         size = int(proportion * len(self.data))
@@ -97,8 +101,8 @@ class Convertor:
         print(len(train_data))
         print(len(test_data))
 
-        outputFile(train_data, "train.testdb2.json")
-        outputFile(test_data, "test.testdb2.json")
+        outputFile(train_data, "www.train3.json")
+        outputFile(test_data, "www.test3.json")
 
 def outputFile(data, fileName):
     with open(fileName, 'w') as outfile:
@@ -106,8 +110,10 @@ def outputFile(data, fileName):
 
 
 if __name__ == "__main__":
-    conv = Convertor("/Users/gary/Documents/ApproximateReasoning/dataset/processed/DBtest/02/", 500)
-    conv.split(1.0)
+    conv = Convertor("/Users/gary/Documents/ApproximateReasoning/dataset/WWW/DBpedia/2/", 1000)
+    #conv = Convertor("/Users/gary/PycharmProjects/ABoxReasoning/DBpedia_random/", 1000)
+    #conv.split(1.0)
+    conv.output()
     # data = {"targets": [[1.5315927180606692]], "graph": [[0, 3, 1], [8, 1, 15], [8, 1, 16]], "node_features": [[0, 0, 1, 0, 0], [0, 1, 0, 0, 0], [1, 0, 0, 0, 0]]}  # {u'абвгд': 1}
     # data["nima"] = "a"
     # list = []

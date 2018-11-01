@@ -19,7 +19,7 @@ parser.add_argument('--annotation_dim', type=int, default=20, help='annotation d
 parser.add_argument('--state_dim', type=int, default=20, help='GGNN hidden state size')
 parser.add_argument('--n_steps', type=int, default=5, help='propogation steps number of GGNN')
 parser.add_argument('--niter', type=int, default=100, help='number of epochs to train for')
-parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
+parser.add_argument('--lr', type=float, default=0.0003, help='learning rate')
 parser.add_argument('--dropout_rate', type=float, default=0.0, help='probability of dropout')
 parser.add_argument('--cuda', action='store_true', help='enables cuda')
 parser.add_argument('--use_bias', action='store_true', help='enables bias for edges', default=True)
@@ -38,8 +38,9 @@ torch.manual_seed(opt.manualSeed)
 if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 
-opt.dataroot = 'data/train.test2.json'
-# opt.dataroot = 'www.train2.json'
+# opt.dataroot = 'data/train.test2.json'
+# opt.dataroot = 'data/www.db2.json'
+opt.dataroot = 'data/www2.json'
 fileName = opt.dataroot[5:]
 
 def main(opt):

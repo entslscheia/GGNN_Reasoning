@@ -13,7 +13,7 @@ class ABoxDataset_plus():
         self.all_data = self.load_graphs_from_file(fileName)
         self.num_of_data = self.all_data[0].shape[0]
         print("number of samples: ", self.num_of_data)
-        all_task_train_data, all_task_val_data = self.split_set(self.all_data, 0.9)
+        all_task_train_data, all_task_val_data = self.split_set(self.all_data, 0.5)
 
         if is_train:
             self.data = all_task_train_data
@@ -34,8 +34,8 @@ class ABoxDataset_plus():
     def load_graphs_from_file(self, file_name):
         with open(file_name, 'r') as f:
             data = json.load(f)
-        random.seed(23)
-        random.shuffle(data)
+        # random.seed(23)
+        # random.shuffle(data)
         self.edge_id_dic = self.get_edge_id_dic(data)
         self.type_id_dic = self.get_type_id_dic(data)
         self.n_edge_types = self.find_max_edge_id(data)
@@ -140,16 +140,32 @@ class ABoxDataset_plus():
         return  max_type_id
 
 
-    def split_set(self, data_list, proportion):
-        num_of_train = self.num_of_data * proportion
-        num_of_train = int(num_of_train)
-        train = [data_list[i][:num_of_train] for i in range(len(data_list))]
-        val = [data_list[i][num_of_train:] for i in range(len(data_list))]
+    def split_set(self, data_list, train_size = 0.1):
+        mod = int(1/train_size)
+        # print('data ', data_list)
+        train = []
+        val = []
+        for i in range(len(data_list)):
+            train_i = []
+            val_i = []
+            for j in range(len(data_list[i])):
+                if j % mod == 0:
+                    train_i.append(data_list[i][j])
+                else:
+                    val_i.append(data_list[i][j])
+            if i == 0 or i == 2:
+                train_i = torch.stack(train_i)
+                val_i = torch.stack(val_i)
+            train.append(train_i)
+            val.append(val_i)
+
+        # train = [data_list[i][:num_of_train] for i in range(len(data_list))]
+        # val = [data_list[i][num_of_train:] for i in range(len(data_list))]
 
         return train, val
 
 
 if __name__ == '__main__':
-    dataset = ABoxDataset_plus("train.test.json", True)
-    print(dataset.__getitem__(1))
+    dataset = ABoxDataset_plus("www.db2.json", True)
+    # print(dataset.__getitem__(1))
 
