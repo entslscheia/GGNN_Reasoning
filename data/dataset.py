@@ -12,7 +12,7 @@ class ABoxDataset():
         self.all_data = self.load_graphs_from_file(fileName)
         self.num_of_data = self.all_data[0].shape[0]
         print("number of samples: ", self.num_of_data)
-        all_task_train_data, all_task_val_data = self.split_set(self.all_data, 0.9)
+        all_task_train_data, all_task_val_data = self.split_set(self.all_data, 0.5)
 
         if is_train:
             self.data = all_task_train_data
@@ -87,11 +87,27 @@ class ABoxDataset():
                 max_node_num = len(data[i]['node_features'])
         return max_node_num
 
-    def split_set(self, data_list, proportion):
-        num_of_train = self.num_of_data * proportion
-        num_of_train = int(num_of_train)
-        train = [data_list[i][:num_of_train] for i in range(len(data_list))]
-        val = [data_list[i][num_of_train:] for i in range(len(data_list))]
+    def split_set(self, data_list, train_size = 0.1):
+        mod = int(1/train_size)
+        # print('data ', data_list)
+        train = []
+        val = []
+        for i in range(len(data_list)):
+            train_i = []
+            val_i = []
+            for j in range(len(data_list[i])):
+                if j % mod == 0:
+                    train_i.append(data_list[i][j])
+                else:
+                    val_i.append(data_list[i][j])
+            if i == 0 or i == 2:
+                train_i = torch.stack(train_i)
+                val_i = torch.stack(val_i)
+            train.append(train_i)
+            val.append(val_i)
+
+        # train = [data_list[i][:num_of_train] for i in range(len(data_list))]
+        # val = [data_list[i][num_of_train:] for i in range(len(data_list))]
 
         return train, val
 
