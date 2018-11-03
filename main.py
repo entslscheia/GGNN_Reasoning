@@ -37,7 +37,7 @@ torch.manual_seed(opt.manualSeed)
 if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 
-opt.dataroot = 'data/www02.json'
+opt.dataroot = 'data/dbpedia0.base.json'
 fileName = opt.dataroot[5:]
 
 def main(opt):
@@ -87,13 +87,13 @@ def main(opt):
         acc = float(correct) / float(len(test_dataset))
         if acc > best_acc:
             best_acc = acc
-            print("Best accuracy by far: ", best_acc, '%')
+            print("Best accuracy by far: ", best_acc)
             torch.save(net, './' + fileName + str(opt.n_steps) + '_model.pth')
         if acc >= best_acc:
             num_of_dec = 0
         else:
             num_of_dec += 1
-        print("The best accuracy achieved by far: ", best_acc, '%')
+        print("The best accuracy achieved by far: ", best_acc)
 
 
 if __name__ == "__main__":
