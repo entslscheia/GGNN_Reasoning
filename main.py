@@ -13,7 +13,7 @@ from data.dataset import ABoxDataset
 from data.dataloader import ABoxDataloader
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--workers', type=int, help='number of data loading workers', default=1)
+parser.add_argument('--workers', type=int, help='number of data loading workers', default=0)
 parser.add_argument('--batchSize', type=int, default=32, help='input batch size')
 parser.add_argument('--state_dim', type=int, default=185, help='GGNN hidden state size')
 parser.add_argument('--n_steps', type=int, default=5, help='propogation steps number of GGNN')
