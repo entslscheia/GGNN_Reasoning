@@ -37,7 +37,7 @@ torch.manual_seed(opt.manualSeed)
 if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 
-opt.dataroot = 'data/dbpedia0.base.json'
+opt.dataroot = 'data/www01.json'
 fileName = opt.dataroot[5:]
 
 def main(opt):
