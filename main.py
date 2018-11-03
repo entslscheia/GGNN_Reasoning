@@ -37,7 +37,7 @@ torch.manual_seed(opt.manualSeed)
 if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 
-opt.dataroot = 'data/train.db2.json'
+opt.dataroot = 'data/www02.json'
 fileName = opt.dataroot[5:]
 
 def main(opt):
@@ -83,7 +83,8 @@ def main(opt):
             print("Early stop! The accuracy has been dropped for 15 iterations!")
             break
         train(epoch, train_dataloader, train_dataset, net, criterion, optimizer, opt)
-        acc = test(test_dataloader, test_dataset, net, criterion, opt)
+        correct = test(test_dataloader, test_dataset, net, criterion, opt)
+        acc = float(correct) / float(len(test_dataset))
         if acc > best_acc:
             best_acc = acc
             print("Best accuracy by far: ", best_acc, '%')

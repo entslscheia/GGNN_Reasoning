@@ -5,6 +5,9 @@ def test(dataloader, dataset, net, criterion, edge_id_dic, type_id_dic, opt):
     test_loss = 0
     sample_count = 0
     correct = 0
+    positive = 0
+    predict_positive = 0
+    true_positive = 0
     net.eval()  # set the evaluation mode. It's necessary when using something like dropout
     for i, (annotation_id, A_dummy, target, data_idx) in enumerate(dataloader, 0):
         if opt.cuda:
@@ -28,11 +31,22 @@ def test(dataloader, dataset, net, criterion, edge_id_dic, type_id_dic, opt):
         if opt.cuda:
             pred = pred.cuda()
         correct += pred.eq(target.data).cpu().sum()
+        for i in range(len(target)):
+            if target[i] == 0:
+                positive += 1
+                if pred[i] == 0:
+                    true_positive += 1
+            if pred[i] == 0:
+                predict_positive += 1
 
     test_loss /= sample_count
     accuracy = 100. * correct / len(dataloader.dataset)
-    print('Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)'.format(
+    precision = float(true_positive/predict_positive)
+    recall = float(true_positive/positive)
+    f1 = 2./(1./precision + 1./recall)
+    print('Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.4f}%), Precision: {:.4f}, Recall:  {:.4f}, F1: {:.4f}'\
+        .format(
         test_loss, correct, len(dataloader.dataset),
-        accuracy))
+        accuracy, precision, recall, f1))
 
-    return accuracy.item()
+    return correct.item()
