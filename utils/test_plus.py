@@ -41,9 +41,15 @@ def test(dataloader, dataset, net, criterion, edge_id_dic, type_id_dic, opt):
 
     test_loss /= sample_count
     accuracy = 100. * correct / len(dataloader.dataset)
-    precision = float(true_positive/predict_positive)
+    try:
+        precision = float(true_positive / predict_positive)
+    except:
+        precision = 0.0
     recall = float(true_positive/positive)
-    f1 = 2./(1./precision + 1./recall)
+    try:
+        f1 = 2./(1./precision + 1./recall)
+    except:
+        f1 = 0.0
     print('Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.4f}%), Precision: {:.4f}, Recall:  {:.4f}, F1: {:.4f}'\
         .format(
         test_loss, correct, len(dataloader.dataset),

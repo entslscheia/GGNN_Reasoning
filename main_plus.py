@@ -15,10 +15,10 @@ from data.dataloader import ABoxDataloader
 parser = argparse.ArgumentParser()
 parser.add_argument('--workers', type=int, help='number of data loading workers', default=0)
 parser.add_argument('--batchSize', type=int, default=32, help='input batch size')
-parser.add_argument('--annotation_dim', type=int, default=20, help='annotation dimension for nodes')
-parser.add_argument('--state_dim', type=int, default=20, help='GGNN hidden state size')
-parser.add_argument('--n_steps', type=int, default=5, help='propogation steps number of GGNN')
-parser.add_argument('--niter', type=int, default=100, help='number of epochs to train for')
+parser.add_argument('--annotation_dim', type=int, default=100, help='annotation dimension for nodes')
+parser.add_argument('--state_dim', type=int, default=100, help='GGNN hidden state size')
+parser.add_argument('--n_steps', type=int, default=2, help='propogation steps number of GGNN')
+parser.add_argument('--niter', type=int, default=500, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
 parser.add_argument('--dropout_rate', type=float, default=0.0, help='probability of dropout')
 parser.add_argument('--cuda', action='store_true', help='enables cuda')
@@ -38,9 +38,9 @@ torch.manual_seed(opt.manualSeed)
 if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 
-# opt.dataroot = 'data/train.test2.json'
+opt.dataroot = 'data/www1.yago.json'
 # opt.dataroot = 'data/www.db2.json'
-opt.dataroot = 'data/www2.json'
+#opt.dataroot = 'data/www1.json'
 fileName = opt.dataroot[5:]
 
 def main(opt):

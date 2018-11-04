@@ -88,7 +88,7 @@ class ABoxDataset_plus():
         freq_dic = self.get_type_frequency(data)
         i = 1
         for k, v in freq_dic:
-            if k != 0 and v > 20:
+            if k != 0 and v > 0:
                 type_id_dic[k] = i
                 i += 1
         return type_id_dic
@@ -107,7 +107,7 @@ class ABoxDataset_plus():
         freq_dict = self.get_edge_frequency(data)
         i = 1
         for k, v in freq_dict:
-            if v > 20:     # the threshold frequency for unk. if set to 0,then it's equivalent to the original version
+            if v > 0:     # the threshold frequency for unk. if set to 0,then it's equivalent to the original version
                 edge_id_dic[k] = i
                 i += 1
         return edge_id_dic

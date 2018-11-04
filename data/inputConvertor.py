@@ -73,7 +73,8 @@ class Convertor:
 
         #print(len(self.data))
     def output(self):
-        outputFile(self.data, "www02.json")
+        outputFile(self.data, "yago0.base.json")
+        #outputFile(self.data, "www01.json")
 
     # proportion: the proportion of traning data 0-1
     def split(self, proportion):
@@ -109,7 +110,8 @@ def outputFile(data, fileName):
         json.dump(data, outfile)
 
 if __name__ == "__main__":
-    conv = Convertor("/Users/gary/Documents/ApproximateReasoning/dataset/WWW/DBpedia/2/", 1000)
+    #conv = Convertor("/Users/gary/Documents/ApproximateReasoning/dataset/WWW/DBpedia/1/", 1000)
+    conv = Convertor("/Users/gary/PycharmProjects/ABoxReasoning/Yago/", 1000)
     conv.output()
     # data = {"targets": [[1.5315927180606692]], "graph": [[0, 3, 1], [8, 1, 15], [8, 1, 16]], "node_features": [[0, 0, 1, 0, 0], [0, 1, 0, 0, 0], [1, 0, 0, 0, 0]]}  # {u'абвгд': 1}
     # data["nima"] = "a"
