@@ -1,6 +1,7 @@
 import argparse
 import random
 import numpy as np
+from time import time
 
 import torch
 import torch.nn as nn
@@ -14,12 +15,12 @@ from data.dataloader import ABoxDataloader
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--workers', type=int, help='number of data loading workers', default=0)
-parser.add_argument('--batchSize', type=int, default=32, help='input batch size')
-parser.add_argument('--annotation_dim', type=int, default=100, help='annotation dimension for nodes')
-parser.add_argument('--state_dim', type=int, default=100, help='GGNN hidden state size')
-parser.add_argument('--n_steps', type=int, default=2, help='propogation steps number of GGNN')
+parser.add_argument('--batchSize', type=int, default=16, help='input batch size')
+parser.add_argument('--annotation_dim', type=int, default=20, help='annotation dimension for nodes')
+parser.add_argument('--state_dim', type=int, default=20, help='GGNN hidden state size')
+parser.add_argument('--n_steps', type=int, default=5, help='propogation steps number of GGNN')
 parser.add_argument('--niter', type=int, default=500, help='number of epochs to train for')
-parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
+parser.add_argument('--lr', type=float, default=0.00001, help='learning rate')
 parser.add_argument('--dropout_rate', type=float, default=0.0, help='probability of dropout')
 parser.add_argument('--cuda', action='store_true', help='enables cuda')
 parser.add_argument('--use_bias', action='store_true', help='enables bias for edges', default=True)
@@ -38,7 +39,7 @@ torch.manual_seed(opt.manualSeed)
 if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 
-opt.dataroot = 'data/www1.yago.json'
+opt.dataroot = 'data/yago.base#.json'
 # opt.dataroot = 'data/www.db2.json'
 #opt.dataroot = 'data/www1.json'
 fileName = opt.dataroot[5:]
@@ -78,8 +79,11 @@ def main(opt):
             break
         train(epoch, train_dataloader, train_dataset, net, criterion, optimizer, train_dataset.edge_id_dic, \
               train_dataset.type_id_dic, opt)
+        start = time()
         correct = test(test_dataloader, test_dataset, net, criterion, train_dataset.edge_id_dic, \
                    train_dataset.type_id_dic, opt)
+        end = time()
+        # print(end - start)
         acc = float(correct) / float(len(test_dataset))
         if acc > best_acc:
             best_acc = acc

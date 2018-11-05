@@ -34,10 +34,13 @@ class ABoxDataset_plus():
     def load_graphs_from_file(self, file_name):
         with open(file_name, 'r') as f:
             data = json.load(f)
+        data = self.cleanData(data)
         # random.seed(23)
         # random.shuffle(data)
         self.edge_id_dic = self.get_edge_id_dic(data)
+        print(self.edge_id_dic)
         self.type_id_dic = self.get_type_id_dic(data)
+        print(self.type_id_dic)
         self.n_edge_types = self.find_max_edge_id(data)
         self.n_node = self.find_max_node_num(data)
         self.n_types = self.find_max_type_id(data)
@@ -74,6 +77,16 @@ class ABoxDataset_plus():
         all_data.append(data_idx)
         return all_data
 
+    def cleanData(self, data):    # clean empty graphs
+        cleannedData = []
+        for d in data:
+            if len(d['graph']) != 0:
+                cleannedData.append(d)
+                # if d['targets'][0][0] == 0:
+                #     cleannedData.append(d)
+                #     cleannedData.append(d)
+        return cleannedData
+
     @staticmethod
     def get_type_frequency(data):
         freq_dict = defaultdict(int)
@@ -107,7 +120,7 @@ class ABoxDataset_plus():
         freq_dict = self.get_edge_frequency(data)
         i = 1
         for k, v in freq_dict:
-            if v > 0:     # the threshold frequency for unk. if set to 0,then it's equivalent to the original version
+            if v > 20:     # the threshold frequency for unk. if set to 0,then it's equivalent to the original version
                 edge_id_dic[k] = i
                 i += 1
         return edge_id_dic
@@ -161,6 +174,13 @@ class ABoxDataset_plus():
 
         # train = [data_list[i][:num_of_train] for i in range(len(data_list))]
         # val = [data_list[i][num_of_train:] for i in range(len(data_list))]
+
+        return train, val
+
+    def split_set0(self, data_list, train_size = 0.1):
+        num_of_train = int(self.num_of_data*train_size)
+        train = [data_list[i][:num_of_train] for i in range(len(data_list))]
+        val = [data_list[i][num_of_train:] for i in range(len(data_list))]
 
         return train, val
 

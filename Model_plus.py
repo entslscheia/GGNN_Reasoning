@@ -70,7 +70,7 @@ class GGNN_plus(nn.Module):
             nn.Linear(self.state_dim + self.annotation_dim, 1),
             nn.Tanh()
         )
-        self.result = nn.Sigmoid()
+        self.   result = nn.Sigmoid()
 
 
     def forward(self, annotation_id, A, edge_id_dic, type_id_dic):
@@ -100,7 +100,7 @@ class GGNN_plus(nn.Module):
         assert self.state_dim >= self.annotation_dim
         if self.state_dim > self.annotation_dim:
             padding = torch.zeros(len(annotation), self.n_node, self.state_dim - self.annotation_dim).double()
-            prop_state = torch.cat((annotation.double(), padding), 2)  # [batch_size, self.n_node, state_dim]
+            prop_state = torch.cat((annotation.double(), padding), 2)  # [batch_size, self.n_node, state_dim], h0
         else:
             prop_state = annotation.clone()
 

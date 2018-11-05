@@ -31,8 +31,9 @@ class Convertor:
                                 self.edgesIndex.append(items[1])
                         elif not (items[2].__contains__("ObjectProperty") or items[2].__contains__("DataProperty")):
                             if not items[2] in self.typesIndex:
-                                self.typesIndex.append(items[2])
-        # print(len(self.typesIndex))
+                                if relevantYagoType(items[2]):
+                                    self.typesIndex.append(items[2])
+        print(self.typesIndex)
 
         for i in range(num):
             dict = {}
@@ -48,22 +49,24 @@ class Convertor:
                     items = line.split()
                     if line != "" and line != "\n" and line[0] != "#":
                         if not (items[2].__contains__("ObjectProperty") or items[2].__contains__("DataProperty")):
-                            if not items[0] in nodeList:
-                                nodeList.append(items[0])
-                            if not items[2] in nodeList:
-                                nodeList.append(items[2])
-                            if items[1].__contains__("inverseOf"):
-                                edgeID = self.edgesIndex.index(items[1].replace("inverseOf", ""))
-                                subjectID = nodeList.index(items[2])
-                                objectID = nodeList.index(items[0])
-                                graph.append([subjectID, edgeID, objectID])
-                            else:
-                                edgeID = self.edgesIndex.index(items[1])
-                                subjectID = nodeList.index(items[0])
-                                objectID = nodeList.index(items[2])
-                                graph.append([subjectID, edgeID, objectID])
-                            if items[1].__contains__("ns#type"):
-                                concepts.add(items[2])
+                            if not (items[1].__contains__("ns#type") and not relevantYagoType(items[2])):
+                                if not items[0] in nodeList:
+                                    nodeList.append(items[0])
+                                if not items[2] in nodeList:
+                                    nodeList.append(items[2])
+                                if items[1].__contains__("inverseOf"):
+                                    edgeID = self.edgesIndex.index(items[1].replace("inverseOf", ""))
+                                    subjectID = nodeList.index(items[2])
+                                    objectID = nodeList.index(items[0])
+                                    graph.append([subjectID, edgeID, objectID])
+                                else:
+                                    edgeID = self.edgesIndex.index(items[1])
+                                    subjectID = nodeList.index(items[0])
+                                    objectID = nodeList.index(items[2])
+                                    graph.append([subjectID, edgeID, objectID])
+                                if items[1].__contains__("ns#type"):
+                                    concepts.add(items[2])
+
             for j in range(len(nodeList)):  # the first feature vector is for null, so must be zero
                 if nodeList[j] in concepts:
                     nodeFeatures.append(self.typesIndex.index((nodeList[j])))
@@ -80,8 +83,8 @@ class Convertor:
 
     def output(self):
         #outputFile(self.data, "www1.json")
-        #outputFile(self.data, "yago.base.json")
-        outputFile(self.data, "www1.yago.json")
+        outputFile(self.data, "yago.base#.json")
+        #outputFile(self.data, "www1.yago.json")
 
     # proportion: the proportion of traning data 0-1
     def split(self, proportion):
@@ -109,10 +112,17 @@ def outputFile(data, fileName):
     with open(fileName, 'w') as outfile:
         json.dump(data, outfile)
 
+def relevantYagoType(type):
+    file = open("rtYAGO.txt")
+    for line in file:
+        line = line.replace('\n', '')
+        if type.__contains__(line):
+            return True
+    return False
 
 if __name__ == "__main__":
-    conv = Convertor("/Users/gary/Documents/ApproximateReasoning/dataset/WWW/Yago/1/", 1000)
-    #conv = Convertor("/Users/gary/PycharmProjects/ABoxReasoning/Yago/", 1000)
+    #conv = Convertor("/Users/gary/Documents/ApproximateReasoning/dataset/WWW/Yago/1/", 1000)
+    conv = Convertor("/Users/gary/PycharmProjects/ABoxReasoning/Yago/", 1000)
     #conv.split(1.0)
     conv.output()
     # data = {"targets": [[1.5315927180606692]], "graph": [[0, 3, 1], [8, 1, 15], [8, 1, 16]], "node_features": [[0, 0, 1, 0, 0], [0, 1, 0, 0, 0], [1, 0, 0, 0, 0]]}  # {u'абвгд': 1}
