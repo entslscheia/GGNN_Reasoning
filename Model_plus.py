@@ -9,12 +9,12 @@ class Propagator(nn.Module):
 
         self.reset_gate = nn.Sequential(
             nn.Linear(state_dim*3, state_dim),
-            nn.Sigmoid(),
+            nn.LeakyRelu(),
             nn.Dropout(dropout_rate)
         )
         self.update_gate = nn.Sequential(
             nn.Linear(state_dim*3, state_dim),
-            nn.Sigmoid(),
+            nn.LeakyRelu(),
             nn.Dropout(dropout_rate)
         )
         self.tansform = nn.Sequential(
@@ -64,7 +64,7 @@ class GGNN_plus(nn.Module):
         # output
         self.attention = nn.Sequential(
             nn.Linear(self.state_dim + self.annotation_dim, 1),
-            nn.Sigmoid()
+            nn.LeakyRelu()
         )
         self.out = nn.Sequential(
             nn.Linear(self.state_dim + self.annotation_dim, 1),
