@@ -20,3 +20,23 @@ each sample has the format as follows,<br>
 - To run it on GPU, please use command **`python main.py --cuda`**.
 <br>
 (For general use, you should only care about files without a suffix 'plus', as those files are for specific use of ABox reasoning model. Specifically, for GGNN_plus, there is no need for you to specify the initial annotations for each node by yourself, the annotation for all nodes are stored in an embedding layer, which is also learnable during the training process. Experiments demonstrate that GGNN_plus outperforms GGNN on ABox Reasoning in terms of both efficiency and effectiveness.)
+
+## Citation
+Please cite the original GGNN paper:
+```
+@inproceedings{li2016gated,
+  title={Gated Graph Sequence Neural Networks},
+  author={Li, Yujia and Zemel, Richard and Brockschmidt, Marc and Tarlow, Daniel},
+  booktitle={Proceedings of ICLR'16},
+  year={2016}
+}
+```
+Also, if you find our implementation useful, please also cite the following paper:
+```
+@inproceedings{gu2019local,
+  title={Local ABox consistency prediction with transparent TBoxes using gated graph neural networks},
+  author={Gu, Yu and Pan, Jeff Z and Cheng, Gong and Paulheim, Heiko and Stoilos, Giorgos},
+  booktitle={Proc. 14th International Workshop on Neural-Symbolic Learning and Reasoning (NeSy)},
+  year={2019}
+}
+```
